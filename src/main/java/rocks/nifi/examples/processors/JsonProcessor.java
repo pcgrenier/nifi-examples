@@ -5,11 +5,14 @@
  */
 package rocks.nifi.examples.processors;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.io.IOUtils;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.flowfile.FlowFile;
 import org.apache.nifi.processor.AbstractProcessor;
@@ -18,6 +21,7 @@ import org.apache.nifi.processor.ProcessSession;
 import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
+import org.apache.nifi.processor.io.InputStreamCallback;
 import org.apache.nifi.processor.util.StandardValidators;
 
 /**
@@ -55,7 +59,13 @@ public class JsonProcessor extends AbstractProcessor {
     public void onTrigger(ProcessContext context, ProcessSession session) throws ProcessException {
         FlowFile flowfile = session.get();
         
-        
+        session.read(flowfile, new InputStreamCallback() {
+            @Override
+            public void process(InputStream in) throws IOException {
+                String json = IOUtils.toString(in);
+                
+            }
+        });
     }
     
     @Override
