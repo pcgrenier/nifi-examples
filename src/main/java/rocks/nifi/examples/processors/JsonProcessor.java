@@ -58,4 +58,14 @@ public class JsonProcessor extends AbstractProcessor {
         
     }
     
+    @Override
+    public Set<Relationship> getRelationships(){
+        return relationships;
+    }
+    
+    @Override
+    public List<PropertyDescriptor> getSupportedPropertyDescriptors(){
+        return properties;
+    }
+    
 }
