@@ -5,13 +5,16 @@
  */
 package rocks.nifi.examples.processors;
 
+import com.jayway.jsonpath.JsonPath;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.IOUtils;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.flowfile.FlowFile;
@@ -20,14 +23,21 @@ import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.ProcessSession;
 import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
+import org.apache.nifi.processor.annotation.CapabilityDescription;
+import org.apache.nifi.processor.annotation.SideEffectFree;
+import org.apache.nifi.processor.annotation.Tags;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.InputStreamCallback;
+import org.apache.nifi.processor.io.OutputStreamCallback;
 import org.apache.nifi.processor.util.StandardValidators;
 
 /**
  *
  * @author phillip
  */
+@SideEffectFree
+@Tags({"JSON", "NIFI ROCKS"})
+@CapabilityDescription("Fetch value from json path.")
 public class JsonProcessor extends AbstractProcessor {
     
     private List<PropertyDescriptor> properties;
@@ -58,14 +68,27 @@ public class JsonProcessor extends AbstractProcessor {
     @Override
     public void onTrigger(ProcessContext context, ProcessSession session) throws ProcessException {
         FlowFile flowfile = session.get();
+        final AtomicReference<String> value = new AtomicReference<>();
         
         session.read(flowfile, new InputStreamCallback() {
             @Override
             public void process(InputStream in) throws IOException {
                 String json = IOUtils.toString(in);
-                
+                String result = JsonPath.read(json, "$.hello");
+                value.set(result);
             }
         });
+        
+        flowfile = session.write(flowfile, new OutputStreamCallback() {
+
+            @Override
+            public void process(OutputStream out) throws IOException {
+                out.write(value.get().getBytes());
+            }
+        });
+        
+        session.transfer(flowfile, SUCCESS);
+                                                                                                                                                                                                                                                                                                                                                                                                         
     }
     
     @Override
