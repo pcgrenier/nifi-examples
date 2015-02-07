@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.IOUtils;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.flowfile.FlowFile;
+import org.apache.nifi.logging.ProcessorLog;
 import org.apache.nifi.processor.AbstractProcessor;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.ProcessSession;
@@ -39,9 +40,11 @@ import org.apache.nifi.processor.util.StandardValidators;
 @Tags({"JSON", "NIFI ROCKS"})
 @CapabilityDescription("Fetch value from json path.")
 public class JsonProcessor extends AbstractProcessor {
-    
+   
     private List<PropertyDescriptor> properties;
     private Set<Relationship> relationships;
+    
+    public static final String MATCH_ATTR = "match";
     
     public static final PropertyDescriptor JSON_PATH = new PropertyDescriptor.Builder()
             .name("Json Path")
@@ -67,18 +70,32 @@ public class JsonProcessor extends AbstractProcessor {
     
     @Override
     public void onTrigger(ProcessContext context, ProcessSession session) throws ProcessException {
-        FlowFile flowfile = session.get();
+        final ProcessorLog log = this.getLogger();
         final AtomicReference<String> value = new AtomicReference<>();
+        
+        FlowFile flowfile = session.get();
         
         session.read(flowfile, new InputStreamCallback() {
             @Override
             public void process(InputStream in) throws IOException {
-                String json = IOUtils.toString(in);
-                String result = JsonPath.read(json, "$.hello");
-                value.set(result);
+                try{
+                    String json = IOUtils.toString(in);
+                    String result = JsonPath.read(json, "$.hello");
+                    value.set(result);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                    log.error("Failed to read json string.");
+                }
             }
         });
         
+        // Write the results to an attribute 
+        String results = value.get();
+        if(results != null && !results.isEmpty()){
+            flowfile = session.putAttribute(flowfile, "match", results);
+        }
+        
+        // To write the results back out ot flow file 
         flowfile = session.write(flowfile, new OutputStreamCallback() {
 
             @Override
@@ -87,8 +104,7 @@ public class JsonProcessor extends AbstractProcessor {
             }
         });
         
-        session.transfer(flowfile, SUCCESS);
-                                                                                                                                                                                                                                                                                                                                                                                                         
+        session.transfer(flowfile, SUCCESS);                                                                                                                                                                                                                                                                                                                                                                                                 
     }
     
     @Override
