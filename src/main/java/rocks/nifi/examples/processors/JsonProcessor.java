@@ -69,7 +69,7 @@ public class JsonProcessor extends AbstractProcessor {
     }
     
     @Override
-    public void onTrigger(ProcessContext context, ProcessSession session) throws ProcessException {
+    public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
         final ProcessorLog log = this.getLogger();
         final AtomicReference<String> value = new AtomicReference<>();
         
@@ -80,7 +80,7 @@ public class JsonProcessor extends AbstractProcessor {
             public void process(InputStream in) throws IOException {
                 try{
                     String json = IOUtils.toString(in);
-                    String result = JsonPath.read(json, "$.hello");
+                    String result = JsonPath.read(json, context.getProperty(JSON_PATH).getValue());
                     value.set(result);
                 }catch(Exception ex){
                     ex.printStackTrace();
