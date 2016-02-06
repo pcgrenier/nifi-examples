@@ -1,0 +1,8 @@
+/.idea
+/.idea/*
+*.iml
+/sample-bundle-nar/target/*
+/sample-controller-service-api-nar/target/*
+/sample-controller-service-api/target/*
+/sample-controller-service/target/*
+/sample-processor/target/*
