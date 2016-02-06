@@ -13,6 +13,12 @@ import rocks.nifi.examples.PropertiesFileService;
 import rocks.nifi.examples.StandardPropertiesFileService;
 
 import org.junit.*;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -49,14 +55,11 @@ public class ControllerServiceProcessorTest {
         runner.enableControllerService(propertiesService);
         runner.setProperty(ControllerServiceProcessor.PROPERTIES_SERVICE, "propertiesServiceTest");
 
-        // Content to be mock a json file
-        InputStream content = this.getClass().getClassLoader().getResourceAsStream("test.json");
-
         // Add properties
         runner.setProperty(ControllerServiceProcessor.PROPERTY_NAME, "hello");
 
         // Add the content to the runner
-        runner.enqueue(content);
+        runner.enqueue("TEST".getBytes());
 
         // Run the enqueued content, it also takes an int = number of contents queued
         runner.run(1);
