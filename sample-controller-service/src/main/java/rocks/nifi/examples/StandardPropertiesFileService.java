@@ -1,5 +1,7 @@
 package rocks.nifi.examples;
 
+import org.apache.nifi.annotation.documentation.CapabilityDescription;
+import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnEnabled;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.controller.AbstractControllerService;
@@ -22,8 +24,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Created by phillip on 2/5/16.
+ * Created by http://www.nifi.rocks on 2/5/16.
  */
+
+@Tags({"nifirocks", "properties"})
+@CapabilityDescription("Provides a controller service to manage property files.")
 public class StandardPropertiesFileService extends AbstractControllerService implements PropertiesFileService{
     private static final Logger log = LoggerFactory.getLogger(StandardPropertiesFileService.class);
 

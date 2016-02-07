@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
- * @author phillip
+ * @author http://www.nifi.rocks
  */
 @SideEffectFree
 @Tags({"Properties", "NIFI ROCKS"})
