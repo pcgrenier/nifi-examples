@@ -139,7 +139,6 @@ public class StandardPropertiesFileService extends AbstractControllerService imp
     private class FilesWatcherWorker implements Runnable {
         @Override
         public void run() {
-            lock.readLock().lock();
             try{
                 log.info("Check file watcher");
                 if(fileWatcher.checkAndReset()){
@@ -148,9 +147,7 @@ public class StandardPropertiesFileService extends AbstractControllerService imp
                 }
             } catch (IOException e) {
                 log.error("Failed to check file watcher!", e);
-            } finally {
-                lock.readLock().unlock();
-            }
+            } 
         }
     }
     
