@@ -12,7 +12,6 @@ import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.flowfile.FlowFile;
-import org.apache.nifi.logging.ProcessorLog;
 import org.apache.nifi.processor.*;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.InputStreamCallback;
@@ -72,13 +71,12 @@ public class ControllerServiceProcessor extends AbstractProcessor {
 
     @Override
     public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
-        final ProcessorLog log = this.getLogger();
         final AtomicReference<String> value = new AtomicReference<>();
 
         final String propertyName = context.getProperty(PROPERTY_NAME).getValue();
         final PropertiesFileService propertiesService = context.getProperty(PROPERTIES_SERVICE).asControllerService(PropertiesFileService.class);
         final String property = propertiesService.getProperty(propertyName);
-        log.info("Property = " + property);
+        getLogger().info("Property = " + property);
 
 
         FlowFile flowfile = session.get();
