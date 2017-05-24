@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.io.IOUtils;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.flowfile.FlowFile;
-import org.apache.nifi.logging.ProcessorLog;
 import org.apache.nifi.processor.AbstractProcessor;
 import org.apache.nifi.processor.ProcessContext;
 import org.apache.nifi.processor.ProcessSession;
@@ -70,7 +69,7 @@ public class JsonProcessor extends AbstractProcessor {
     
     @Override
     public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
-        final ProcessorLog log = this.getLogger();
+        
         final AtomicReference<String> value = new AtomicReference<>();
         
         FlowFile flowfile = session.get();
@@ -84,7 +83,7 @@ public class JsonProcessor extends AbstractProcessor {
                     value.set(result);
                 }catch(Exception ex){
                     ex.printStackTrace();
-                    log.error("Failed to read json string.");
+                    getLogger().error("Failed to read json string.");
                 }
             }
         });
