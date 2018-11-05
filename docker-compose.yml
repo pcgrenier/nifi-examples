@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "8090:8090"
+    environment:
+      INFLUXDB_DB: "db"
+      INFLUXDB_USER: "user"
+      INFLUXDB_USER_PASSWORD: "pass"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    links:
+      - influxdb
+
+  nifi:
+    build: .
+    container_name: nifi-examples
+    ports:
+      - 8080:8080
+      - 8000:8000
+    links:
+      - influxdb

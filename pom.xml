@@ -11,6 +11,7 @@
 
     <properties>
         <nifi.version>1.5.0</nifi.version>
+        <influxdb.version>2.9</influxdb.version>
     </properties>
 
     <modules>
@@ -18,6 +19,8 @@
         <module>sample-controller-service-api-nar</module>
         <module>sample-controller-service</module>
         <module>sample-processor</module>
+        <module>sample-reporting-task</module>
+        <module>sample-reporting-task-nar</module>
         <module>sample-bundle-nar</module>
     </modules>
     <dependencyManagement>
@@ -36,6 +39,11 @@
             <dependency>
                 <groupId>org.apache.nifi</groupId>
                 <artifactId>nifi-processor-utils</artifactId>
+                <version>${nifi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.nifi</groupId>
+                <artifactId>nifi-reporting-utils</artifactId>
                 <version>${nifi.version}</version>
             </dependency>
             <dependency>
@@ -59,6 +67,12 @@
                 <artifactId>nifi-mock</artifactId>
                 <version>${nifi.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java -->
+            <dependency>
+                <groupId>org.influxdb</groupId>
+                <artifactId>influxdb-java</artifactId>
+                <version>${influxdb.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
